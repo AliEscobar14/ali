@@ -16,7 +16,7 @@ Root gerekmez. "RAM temizleyici" gibi sahte hızlandırma yapmaz. Sadece sistemi
 1. **Geliştirici seçeneklerini aç:** Ayarlar → Telefon hakkında → *MIUI sürümü*'ne 7 kez dokun.
 2. Ayarlar → Ek ayarlar → Geliştirici seçenekleri bölümünde **USB hata ayıklama**'yı aç. Komutlar "izin yok" hatası verirse **USB hata ayıklama (Güvenlik ayarları)**'nı da aç. Bunun için SIM kart ve Mi Hesabı gerekir.
 3. [Shizuku](https://shizuku.rikka.app/download/)'yu kur ve başlat:
-   - **Android 10** kurulu ise telefonu bilgisayara bağla ve Shizuku'nun "Bilgisayar ile başlat" bölümünde gösterdiği `adb shell ...` komutunu çalıştır. Bu işlemi telefon **her yeniden başladığında** tekrarlaman gerekir.
+   - **Android 10** kurulu ise telefonu bilgisayara bağla. Shizuku'da **Bilgisayara bağlanarak başlatın → Komutu görüntüle** bölümündeki komutu **Kopyala/Gönder** ile bilgisayara aktar ve `platform-tools` klasöründe açtığın CMD'de çalıştır. Komut `adb shell /data/app/moe.shizuku.privileged.api-.../lib/arm/libshizuku.so` biçimindedir ve her telefonda farklıdır. Bu işlemi telefon **her yeniden başladığında** tekrarlaman gerekir.
    - **Android 11+** kurulu ise Shizuku'yu kablosuz hata ayıklama ile doğrudan telefondan başlatabilirsin.
 4. Hafiflet'i kur, aç ve **İzin ver**'e dokun.
 
