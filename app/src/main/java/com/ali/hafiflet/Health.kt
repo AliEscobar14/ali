@@ -48,24 +48,3 @@ class Health(
         }
     }
 }
-
-class ProcessMemory(val name: String, val pssKb: Long)
-
-/** "dumpsys meminfo" çıktısındaki "Total PSS by process" bölümünü ayrıştırır (büyükten küçüğe sıralıdır). */
-fun parseMeminfo(output: String): List<ProcessMemory> {
-    val line = Regex("""^\s*([\d,]+)K: (\S+) \(pid \d+""")
-    val result = mutableListOf<ProcessMemory>()
-    var inSection = false
-    for (raw in output.lines()) {
-        if (raw.startsWith("Total PSS by process")) {
-            inSection = true
-            continue
-        }
-        if (!inSection) continue
-        if (raw.isBlank()) break
-        val match = line.find(raw) ?: continue
-        val kb = match.groupValues[1].replace(",", "").toLongOrNull() ?: continue
-        result += ProcessMemory(match.groupValues[2], kb)
-    }
-    return result
-}

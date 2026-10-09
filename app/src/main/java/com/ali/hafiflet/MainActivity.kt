@@ -129,6 +129,9 @@ class MainActivity : AppCompatActivity() {
             resolutionDialog = null
             dialog.dismiss()
             Toast.makeText(this, R.string.res_reverted, Toast.LENGTH_LONG).show()
+            // Ekran yeniden oluşturulmazsa kontrolleri, shell geri döndükten sonra yenile.
+            val delay = (Tweaks.REVERT_SECONDS - Tweaks.CONFIRM_SECONDS + 1) * 1000L
+            mainHandler.postDelayed({ if (!isDestroyed) optimize.refresh() }, delay)
             return
         }
         dialog.setMessage(getString(R.string.res_confirm_message, remaining))

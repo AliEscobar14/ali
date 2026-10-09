@@ -12,6 +12,7 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import com.google.android.material.progressindicator.LinearProgressIndicator
+import kotlin.math.roundToInt
 
 /** Panel sekmesi: Shizuku durumu, canlı sistem durumu ve RAM kullanan işlemler. */
 class PanelPage(private val activity: MainActivity, root: View) {
@@ -36,6 +37,9 @@ class PanelPage(private val activity: MainActivity, root: View) {
     private val uptimeValue: TextView = root.findViewById(R.id.uptime_value)
     private val processButton: Button = root.findViewById(R.id.process_button)
     private val processList: LinearLayout = root.findViewById(R.id.process_list)
+    private val hogsButton: Button = root.findViewById(R.id.hogs_button)
+    private val hogsStatus: TextView = root.findViewById(R.id.hogs_status)
+    private val hogsList: LinearLayout = root.findViewById(R.id.hogs_list)
 
     private val live = object : Runnable {
         override fun run() {
@@ -48,6 +52,7 @@ class PanelPage(private val activity: MainActivity, root: View) {
         shizukuAction.setOnClickListener { onShizukuAction() }
         root.findViewById<View>(R.id.refresh_health).setOnClickListener { refreshHealth() }
         processButton.setOnClickListener { loadProcesses() }
+        hogsButton.setOnClickListener { loadHogs() }
     }
 
     fun startLive() {
@@ -81,6 +86,7 @@ class PanelPage(private val activity: MainActivity, root: View) {
             }
         }
         processButton.isEnabled = ready
+        hogsButton.isEnabled = ready
     }
 
     private fun onShizukuAction() {
@@ -140,6 +146,76 @@ class PanelPage(private val activity: MainActivity, root: View) {
         }
     }
 
+    private class HogsResult(
+        val hogs: List<BackgroundHog>,
+        val userApps: Set<String>,
+        val restricted: Set<String>,
+    )
+
+    private fun loadHogs() {
+        hogsButton.isEnabled = false
+        hogsButton.setText(R.string.process_loading)
+        hogsList.removeAllViews()
+        hogsStatus.show(false)
+        activity.background({
+            Tweaks.backgroundHogs()?.let { hogs ->
+                HogsResult(
+                    hogs.filter { it.pkg != activity.packageName && it.averageKb >= MIN_HOG_KB }.take(8),
+                    Tweaks.userPackages(activity).toSet(),
+                    Tweaks.restrictedPackages(),
+                )
+            }
+        }) { result ->
+            hogsButton.isEnabled = Shell.state == Shell.State.READY
+            hogsButton.setText(R.string.hogs_button)
+            hogsStatus.show(result == null || result.hogs.isEmpty())
+            if (result == null) {
+                hogsStatus.setText(R.string.hogs_failed)
+                return@background
+            }
+            if (result.hogs.isEmpty()) hogsStatus.setText(R.string.hogs_none)
+            result.hogs.forEach { hogsList.addView(hogRow(it, it.pkg in result.userApps, it.pkg in result.restricted)) }
+        }
+    }
+
+    /** Kullanıcı uygulamaları buradan kısıtlanabilir; sistem uygulamaları yalnızca bilgi olarak gösterilir. */
+    private fun hogRow(hog: BackgroundHog, isUserApp: Boolean, initiallyRestricted: Boolean): View {
+        val row = AppRow(activity, hogsList)
+        val label = label(hog.pkg)
+        var restricted = initiallyRestricted
+        row.title.text = label
+        row.icon.setImageDrawable(loadAppIcon(activity.packageManager, hog.pkg))
+        val usage = activity.getString(
+            R.string.hogs_usage, size(hog.averageKb * 1024), hog.backgroundPercent.roundToInt(),
+        )
+        val note = when {
+            !isUserApp && BLOATWARE.any { it.pkg == hog.pkg } -> activity.getString(R.string.hogs_bloat)
+            !isUserApp -> activity.getString(R.string.hogs_system)
+            hog.pkg in MESSAGING_APPS -> activity.getString(R.string.messaging_warning)
+            else -> null
+        }
+        row.subtitle.text = if (note == null) usage else "$usage\n$note"
+        if (!isUserApp) return row.view
+
+        row.toggle.show(true)
+        fun bind() {
+            row.toggle.isChecked = restricted
+            row.setBadge(if (restricted) R.string.state_restricted else null, AppRow.Tone.GOOD)
+        }
+        bind()
+        row.view.setOnClickListener {
+            row.view.isEnabled = false
+            val target = !restricted
+            activity.background({ Tweaks.setBackgroundRestricted(activity, hog.pkg, label, target) }) { r ->
+                row.view.isEnabled = true
+                if (r.ok) restricted = target
+                else Toast.makeText(activity, r.out.ifBlank { activity.getString(R.string.failed) }, Toast.LENGTH_LONG).show()
+                bind()
+            }
+        }
+        return row.view
+    }
+
     /** İşlem adından ("com.foo:remote") uygulama adını bulur; bulamazsa adı olduğu gibi döner. */
     private fun label(processName: String): String {
         val pm = activity.packageManager
@@ -156,5 +232,8 @@ class PanelPage(private val activity: MainActivity, root: View) {
 
     private companion object {
         const val LIVE_INTERVAL_MS = 5000L
+
+        /** Gün boyu ortalama 5 MB'tan az tutan uygulamalar listelenmez. */
+        const val MIN_HOG_KB = 5 * 1024L
     }
 }

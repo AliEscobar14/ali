@@ -17,6 +17,10 @@ val BLOATWARE = listOf(
     Bloat("com.miui.hybrid", "Hızlı uygulamalar", "Arka planda güncellenen mini uygulamalar"),
     Bloat("com.miui.hybrid.accessory", "Hızlı uygulamalar eklentisi", "Hızlı uygulamaların yardımcı paketi"),
     Bloat("com.miui.yellowpage", "Sarı sayfalar", "Arayan kimliği / işletme rehberi"),
+    Bloat("com.miui.contentcatcher", "Content Catcher", "Ekrandaki içeriği izleyen arka plan servisi"),
+    Bloat("com.miui.catcherpatch", "Content Catcher yaması", "Content Catcher eklentisi"),
+    Bloat("com.mi.android.globalminusscreen", "Uygulama kasası", "Ana ekranın solundaki kartlar; sürekli veri yeniler"),
+    Bloat("com.miui.personalassistant", "Uygulama kasası", "Ana ekranın solundaki kartlar; sürekli veri yeniler"),
 
     // MIUI — uygulamalar
     Bloat("com.xiaomi.mipicks", "GetApps", "Xiaomi uygulama mağazası, bildirim ve reklam gönderir"),
@@ -29,6 +33,11 @@ val BLOATWARE = listOf(
     Bloat("com.miui.weather2", "Hava durumu", "Arka planda konum ve veri kullanır"),
     Bloat("com.xiaomi.midrop", "ShareMe", "Dosya paylaşımı, reklam içerir"),
     Bloat("com.miui.huanji", "Mi Mover", "Eski telefondan veri taşıma"),
+    Bloat("com.miui.touchassistant", "Hızlı top", "Ekranda yüzen kısayol topu"),
+    Bloat("com.miui.phrase", "Sık kullanılan ifadeler", "Klavye ifade önerileri"),
+    Bloat("com.miui.mishare.connectivity", "Mi Share", "Xiaomi cihazlar arası dosya paylaşımı"),
+    Bloat("com.miui.newmidrive", "Mi Drive", "Xiaomi bulut sürücü"),
+    Bloat("com.duokan.phone.remotecontroller", "Mi Uzaktan Kumanda", "Kızılötesi kumanda uygulaması"),
     Bloat("com.mipay.wallet.in", "Mi Pay", "Hindistan'a özel ödeme uygulaması"),
     Bloat("com.mi.globalbrowser", "Mi Tarayıcı", "Başka tarayıcın varsa kaldır", safe = false),
     Bloat("com.mi.android.globalFileexplorer", "Mi Dosya Yöneticisi", "Başka dosya yöneticin varsa kaldır", safe = false),

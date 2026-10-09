@@ -79,18 +79,10 @@ class BloatwareActivity : AppCompatActivity() {
         val out = Shell.exec(
             "echo '#ALL'; pm list packages -u; echo '#INSTALLED'; pm list packages; echo '#DISABLED'; pm list packages -d"
         ).out
-        val sections = mutableMapOf<String, MutableSet<String>>()
-        var current = mutableSetOf<String>()
-        for (line in out.lines().map { it.trim() }) {
-            if (line.startsWith("#")) {
-                current = sections.getOrPut(line) { mutableSetOf() }
-            } else if (line.startsWith("package:")) {
-                current += line.removePrefix("package:")
-            }
-        }
-        val all = sections["#ALL"].orEmpty()
-        val installed = sections["#INSTALLED"].orEmpty()
-        val disabled = sections["#DISABLED"].orEmpty()
+        val sections = parsePackageSections(out)
+        val all = sections["ALL"].orEmpty()
+        val installed = sections["INSTALLED"].orEmpty()
+        val disabled = sections["DISABLED"].orEmpty()
         return BLOATWARE.filter { it.pkg in all }.associate {
             it.pkg to when (it.pkg) {
                 !in installed -> PkgState.REMOVED

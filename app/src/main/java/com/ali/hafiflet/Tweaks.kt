@@ -4,7 +4,6 @@ import android.content.Context
 import android.os.Environment
 import android.os.StatFs
 import android.text.format.Formatter
-import kotlin.math.roundToInt
 
 /**
  * Sistem ayarlarını okuyan ve değiştiren işlemler. Hepsi engelleyicidir; arka planda çağrılmalı.
@@ -13,6 +12,7 @@ import kotlin.math.roundToInt
 object Tweaks {
 
     private val ANIMATION_KEYS = listOf("window_animation_scale", "transition_animation_scale", "animator_duration_scale")
+    private const val KEY_LAST_DNS = "last_dns"
     private const val KEEP_MARKER = "/data/local/tmp/hafiflet_keep"
 
     /** Çözünürlük değişikliği onaylanmazsa shell tarafında bu kadar saniye sonra geri alınır. */
@@ -27,23 +27,13 @@ object Tweaks {
         FAMILY("family.adguard-dns.com"),
     }
 
-    class Display(
-        val width: Int, val height: Int, val density: Int,
-        val overrideWidth: Int?, val overrideHeight: Int?, val overrideDensity: Int?,
-    ) {
-        val currentWidth get() = overrideWidth ?: width
-        val currentHeight get() = overrideHeight ?: height
-        val currentDensity get() = overrideDensity ?: density
-        val factor get() = currentWidth.toFloat() / width
-    }
-
     class State(
         val animationScale: Float,
         val wifiScan: Boolean,
         val bleScan: Boolean,
         /** null: kullanıcı başka bir özel DNS ayarlamış. */
         val dns: Dns?,
-        val display: Display?,
+        val display: DisplayInfo?,
     )
 
     fun read(): State {
@@ -55,7 +45,7 @@ object Tweaks {
             dnsMode != "hostname" -> Dns.OFF
             else -> Dns.entries.firstOrNull { it.host == dnsHost }
         }
-        return State(anim?.toFloatOrNull() ?: 1f, wifi == "1", ble == "1", dns, readDisplay())
+        return State(anim?.toFloatOrNull() ?: 1f, wifi == "1", ble == "1", dns, parseDisplay(Shell.exec("wm size; wm density").out))
     }
 
     // --- Ayarlar ---
@@ -89,6 +79,9 @@ object Tweaks {
         }
         val result = Shell.exec(command)
         if (result.ok) {
+            if (dns != Dns.OFF) {
+                prefs(context).edit().putString(KEY_LAST_DNS, dns.name).apply()
+            }
             ChangeLog.add(
                 context,
                 context.getString(R.string.dns_log, label),
@@ -98,23 +91,54 @@ object Tweaks {
         return result
     }
 
-    // --- Çözünürlük ---
+    /** Kullanıcının en son açtığı DNS sağlayıcısı; hiç seçmediyse AdGuard. */
+    fun lastDns(context: Context): Dns =
+        Dns.entries.firstOrNull { it.name == prefs(context).getString(KEY_LAST_DNS, null) } ?: Dns.ADGUARD
 
-    private fun readDisplay(): Display? {
-        val out = Shell.exec("wm size; wm density").out
-        fun size(label: String) = Regex("$label size: (\\d+)x(\\d+)").find(out)?.groupValues
-        fun density(label: String) = Regex("$label density: (\\d+)").find(out)?.groupValues?.get(1)?.toInt()
-        val physical = size("Physical") ?: return null
-        val physicalDensity = density("Physical") ?: return null
-        val override = size("Override")
-        return Display(
-            physical[1].toInt(), physical[2].toInt(), physicalDensity,
-            override?.get(1)?.toInt(), override?.get(2)?.toInt(), density("Override"),
-        )
+    fun dnsLabel(context: Context, dns: Dns) = context.getString(
+        when (dns) {
+            Dns.OFF -> R.string.dns_off
+            Dns.ADGUARD -> R.string.dns_adguard
+            Dns.FAMILY -> R.string.dns_family
+        }
+    )
+
+    // --- Arka plan ---
+
+    /** Kullanıcının yüklediği uygulamalar (Hafiflet hariç). */
+    fun userPackages(context: Context): List<String> =
+        parsePackageList(Shell.exec("pm list packages -3").out).filter { it != context.packageName }
+
+    /** Arka planda çalışması kısıtlanmış paketler. Tek komutla okunur; paket başına komut çalıştırmaktan çok hızlı. */
+    fun restrictedPackages(): Set<String> =
+        parseRestricted(Shell.exec("dumpsys appops | grep -E '^ *(Uid|Package) |RUN_ANY_IN_BACKGROUND'").out)
+
+    fun setBackgroundRestricted(context: Context, pkg: String, label: String, restrict: Boolean): Shell.Result {
+        val p = Shell.checkPackage(pkg)
+        fun command(mode: String) =
+            "cmd appops set $p RUN_ANY_IN_BACKGROUND $mode && cmd appops set $p RUN_IN_BACKGROUND $mode"
+        val result = Shell.exec(command(if (restrict) "ignore" else "allow"))
+        if (result.ok) {
+            val title = if (restrict) R.string.background_restricted_log else R.string.background_allowed_log
+            ChangeLog.add(context, context.getString(title, label), command(if (restrict) "allow" else "ignore"))
+        }
+        return result
     }
 
+    /**
+     * Son 24 saatte arka planda en çok bellek tutan uygulamalar. Sadece istenince çalışır;
+     * Android'in zaten tuttuğu istatistikleri okur, birkaç saniye sürer.
+     */
+    fun backgroundHogs(): List<BackgroundHog>? {
+        val result = Shell.exec("dumpsys procstats --hours 24 | sed -n '/^Summary:/,/^[A-Z]/p'")
+        if (!result.ok || "Summary:" !in result.out) return null
+        return parseProcstats(result.out)
+    }
+
+    // --- Çözünürlük ---
+
     /** Ekranı mevcut haline döndüren komut. */
-    fun displayRestoreCommand(d: Display): String {
+    fun displayRestoreCommand(d: DisplayInfo): String {
         val size = if (d.overrideWidth != null) "wm size ${d.overrideWidth}x${d.overrideHeight}" else "wm size reset"
         val density = if (d.overrideDensity != null) "wm density ${d.overrideDensity}" else "wm density reset"
         return "$size; $density"
@@ -124,14 +148,13 @@ object Tweaks {
      * Çözünürlüğü ve yoğunluğu aynı oranda küçültür; böylece arayüz öğelerinin boyutu değişmez.
      * Güvenlik için shell'de bir zamanlayıcı kurar: [keepResolution] çağrılmazsa eski haline döner.
      */
-    fun applyResolution(d: Display, factor: Float): Boolean {
+    fun applyResolution(d: DisplayInfo, factor: Float): Boolean {
         val restore = displayRestoreCommand(d)
         val target = if (factor >= 0.99f) {
             "wm size reset; wm density reset"
         } else {
-            val w = even(d.width * factor)
-            val h = even(d.height * factor)
-            "wm size ${w}x$h; wm density ${(d.density * factor).roundToInt()}"
+            val (w, h, density) = scaledDisplay(d, factor)
+            "wm size ${w}x$h; wm density $density"
         }
         val result = Shell.exec(
             "rm -f $KEEP_MARKER; $target; " +
@@ -143,8 +166,6 @@ object Tweaks {
     fun keepResolution() = Shell.exec("touch $KEEP_MARKER")
 
     fun revertResolution(restore: String) = Shell.exec("touch $KEEP_MARKER; $restore")
-
-    private fun even(value: Float) = (value / 2).roundToInt() * 2
 
     // --- Depolama ve hız ---
 
@@ -173,6 +194,9 @@ object Tweaks {
         val lines = Shell.exec(keys.joinToString("; ") { "settings get global $it" }).out.lines()
         return keys.indices.map { i -> lines.getOrNull(i)?.trim()?.takeUnless { it.isEmpty() || it == "null" } }
     }
+
+    private fun prefs(context: Context) =
+        context.applicationContext.getSharedPreferences("tweaks", Context.MODE_PRIVATE)
 
     private fun restoreGlobal(key: String, value: String?): String {
         if (value == null) return "settings delete global $key"

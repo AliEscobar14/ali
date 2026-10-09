@@ -56,3 +56,10 @@ fun loadAppIcon(pm: PackageManager, pkg: String): Drawable? = try {
 } catch (e: PackageManager.NameNotFoundException) {
     null
 }
+
+/** Arka planda kısıtlanırsa bildirimleri gecikebilecek uygulamalar. */
+val MESSAGING_APPS = setOf(
+    "com.whatsapp", "com.whatsapp.w4b", "org.telegram.messenger", "org.thoughtcrime.securesms",
+    "com.facebook.orca", "com.facebook.mlite", "com.instagram.android", "com.discord",
+    "com.viber.voip", "com.skype.raider", "com.microsoft.teams", "com.google.android.apps.messaging",
+)

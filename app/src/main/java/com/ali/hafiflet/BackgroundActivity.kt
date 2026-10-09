@@ -16,13 +16,6 @@ class BackgroundActivity : AppCompatActivity() {
 
     private class AppItem(val pkg: String, val label: String, val icon: Drawable?, var restricted: Boolean)
 
-    /** Kısıtlanırsa bildirimleri gecikebilecek uygulamalar. */
-    private val messaging = setOf(
-        "com.whatsapp", "com.whatsapp.w4b", "org.telegram.messenger", "org.thoughtcrime.securesms",
-        "com.facebook.orca", "com.facebook.mlite", "com.instagram.android", "com.discord",
-        "com.viber.voip", "com.skype.raider", "com.microsoft.teams", "com.google.android.apps.messaging",
-    )
-
     private lateinit var list: LinearLayout
     private lateinit var progress: View
     private val rows = mutableListOf<Pair<AppItem, View>>()
@@ -74,32 +67,10 @@ class BackgroundActivity : AppCompatActivity() {
     }
 
     private fun loadApps(): List<AppItem> {
-        val packages = Shell.exec("pm list packages -3").out.lines()
-            .map { it.trim() }
-            .filter { it.startsWith("package:") }
-            .map { it.removePrefix("package:") }
-            .filter { it != packageName }
-        // Tek seferde tüm paketlerin durumunu okumak, her paket için ayrı komut çalıştırmaktan çok daha hızlı.
-        val dump = Shell.exec("dumpsys appops | grep -E '^ *(Uid|Package) |RUN_ANY_IN_BACKGROUND'").out
-        val restricted = parseRestricted(dump)
-        return packages
+        val restricted = Tweaks.restrictedPackages()
+        return Tweaks.userPackages(this)
             .map { AppItem(it, label(it), loadAppIcon(packageManager, it), it in restricted) }
             .sortedBy { it.label.lowercase() }
-    }
-
-    /** "Package x:" satırlarından sonra gelen "RUN_ANY_IN_BACKGROUND ... ignore" satırlarını eşleştirir. */
-    private fun parseRestricted(dump: String): Set<String> {
-        val result = mutableSetOf<String>()
-        var current: String? = null
-        for (raw in dump.lines()) {
-            val line = raw.trim()
-            when {
-                line.startsWith("Uid ") -> current = null
-                line.startsWith("Package ") -> current = line.removePrefix("Package ").removeSuffix(":")
-                "RUN_ANY_IN_BACKGROUND" in line && "ignore" in line -> current?.let { result += it }
-            }
-        }
-        return result
     }
 
     private fun label(pkg: String) = try {
@@ -112,7 +83,7 @@ class BackgroundActivity : AppCompatActivity() {
         val row = AppRow(this, list)
         row.title.text = item.label
         row.icon.setImageDrawable(item.icon)
-        val isMessaging = item.pkg in messaging
+        val isMessaging = item.pkg in MESSAGING_APPS
         row.subtitle.text = if (isMessaging) getString(R.string.messaging_warning) else item.pkg
         row.toggle.show(true)
 
@@ -132,20 +103,7 @@ class BackgroundActivity : AppCompatActivity() {
     }
 
     private fun setRestricted(item: AppItem, restrict: Boolean, done: () -> Unit) {
-        val p = Shell.checkPackage(item.pkg)
-        val mode = if (restrict) "ignore" else "allow"
-        val undoMode = if (restrict) "allow" else "ignore"
-        background({
-            val r = Shell.exec("cmd appops set $p RUN_ANY_IN_BACKGROUND $mode && cmd appops set $p RUN_IN_BACKGROUND $mode")
-            if (r.ok) {
-                ChangeLog.add(
-                    this,
-                    getString(if (restrict) R.string.background_restricted_log else R.string.background_allowed_log, item.label),
-                    "cmd appops set $p RUN_ANY_IN_BACKGROUND $undoMode && cmd appops set $p RUN_IN_BACKGROUND $undoMode",
-                )
-            }
-            r
-        }) { r ->
+        background({ Tweaks.setBackgroundRestricted(this, item.pkg, item.label, restrict) }) { r ->
             if (r.ok) item.restricted = restrict
             else Toast.makeText(this, r.out.ifBlank { getString(R.string.failed) }, Toast.LENGTH_LONG).show()
             done()

@@ -100,6 +100,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
+                    app:selectionRequired="true"
                     app:singleSelection="true">
 
                     <Button android:id="@+id/dns_off" style="@style/Toggle" android:text="@string/dns_off" />

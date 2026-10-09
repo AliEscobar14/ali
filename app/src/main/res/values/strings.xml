@@ -8,7 +8,7 @@
 
     <!-- Shizuku -->
     <string name="shizuku_not_running_title">Shizuku çalışmıyor</string>
-    <string name="shizuku_not_running">Telefonu bilgisayara bağla ve Shizuku\'nun "Komutu görüntüle" bölümündeki komutu çalıştır. Telefon her yeniden başladığında bu gerekir; yaptığın ayarlar ise kalıcıdır.</string>
+    <string name="shizuku_not_running">Telefonu bilgisayara bağla ve Shizuku\'nun "Komutu görüntüle" bölümündeki komutu çalıştır. Yaptığın ayarlar Shizuku kapansa da kalıcıdır.\n\nKabloyu çıkarınca duruyorsa: Geliştirici seçenekleri → Varsayılan USB yapılandırması → "Dosya aktarımı" yap ve bağlarken USB modunu değiştirme.</string>
     <string name="shizuku_no_permission_title">İzin gerekli</string>
     <string name="shizuku_no_permission">Shizuku çalışıyor ama Hafiflet\'e henüz izin verilmedi.</string>
     <string name="shizuku_connecting_title">Bağlanıyor…</string>
@@ -39,6 +39,19 @@
     <string name="process_loading">Ölçülüyor…</string>
     <string name="process_failed">İşlem listesi okunamadı.</string>
 
+    <string name="hogs_title">Gizli RAM tüketicileri</string>
+    <string name="hogs_hint">Son 24 saatte, sen kullanmıyorken arka planda en çok RAM tutan uygulamalar. Android\'in zaten tuttuğu istatistiklerden okunur; sadece düğmeye basınca çalışır. Dokunarak kısıtlayabilirsin.</string>
+    <string name="hogs_button">Analiz et</string>
+    <string name="hogs_usage">Arka planda ort. %1$s · günün %%%2$d kadarı</string>
+    <string name="hogs_system">Sistem uygulaması: buradan kısıtlanmaz</string>
+    <string name="hogs_bloat">Gereksiz uygulamalar listesinden kapatılabilir</string>
+    <string name="hogs_none">Arka planda belirgin RAM tüketen uygulama yok.</string>
+    <string name="hogs_failed">İstatistikler okunamadı.</string>
+
+    <!-- Bildirim paneli kutucuğu -->
+    <string name="tile_dns">Reklam engelleyici</string>
+    <string name="tile_needs_shizuku">Shizuku gerekli</string>
+
     <!-- Optimize: ekran -->
     <string name="section_display">Ekran</string>
     <string name="anim_title">Animasyon hızı</string>
@@ -67,7 +80,7 @@
     <string name="dns_adguard">AdGuard</string>
     <string name="dns_family">AdGuard Aile</string>
     <string name="dns_custom">Şu an başka bir özel DNS ayarlı.</string>
-    <string name="dns_hint">Uygulamalardaki ve sitelerdeki reklamları tüm telefonda engeller; sayfalar daha hızlı yüklenir, veri tasarrufu sağlar. "Aile" ayrıca yetişkin içeriği engeller. İnternet kesilirse Kapalı\'ya al.</string>
+    <string name="dns_hint">Uygulamalardaki ve sitelerdeki reklamları tüm telefonda engeller; sayfalar daha hızlı yüklenir, veri tasarrufu sağlar. "Aile" ayrıca yetişkin içeriği engeller. İnternet kesilirse Kapalı\'ya al. Bildirim paneline "Reklam engelleyici" kutucuğunu ekleyerek oradan da açıp kapatabilirsin.</string>
     <string name="dns_log">Reklam engelleyici DNS: %1$s</string>
 
     <!-- Optimize: arka plan -->

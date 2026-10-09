@@ -105,6 +105,33 @@ object Shell {
         listeners -= listener
     }
 
+    /**
+     * Shizuku hazır olana kadar en fazla [timeoutMs] bekler, sonucu ana iş parçacığında bildirir.
+     * Uygulama süreci yeni başladığında (örneğin bildirim paneli kutucuğundan) bağlantı birkaç yüz ms sürer.
+     */
+    fun awaitReady(timeoutMs: Long, callback: (Boolean) -> Unit) {
+        var finished = false
+        lateinit var listener: (State) -> Unit
+        val timeout = Runnable {
+            if (finished) return@Runnable
+            finished = true
+            removeListener(listener)
+            callback(false)
+        }
+        listener = { state ->
+            if (state == State.READY && !finished) {
+                finished = true
+                mainHandler.removeCallbacks(timeout)
+                // Dinleyici listesi dolaşılırken listeden çıkarmamak için ertele.
+                mainHandler.post { removeListener(listener) }
+                callback(true)
+            }
+        }
+        mainHandler.postDelayed(timeout, timeoutMs)
+        addListener(listener)
+        refresh()
+    }
+
     /** Engelleyici çağrıdır; ana iş parçacığında çağırma. */
     fun exec(command: String): Result {
         val s = service ?: return Result(-1, "Shizuku bağlı değil")

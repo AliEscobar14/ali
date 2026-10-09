@@ -25,6 +25,14 @@ fun <T> Activity.background(work: () -> T, done: (T) -> Unit) {
     }
 }
 
+/** Activity'ye bağlı olmayan yerler (ör. bildirim paneli kutucuğu) için. */
+fun <T> runAsync(work: () -> T, done: (T) -> Unit) {
+    worker.execute {
+        val result = work()
+        mainHandler.post { done(result) }
+    }
+}
+
 fun View.show(visible: Boolean) {
     visibility = if (visible) View.VISIBLE else View.GONE
 }
