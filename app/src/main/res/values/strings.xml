@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Hafiflet</string>
+
+    <string name="section_shizuku">Shizuku</string>
+    <string name="shizuku_not_running">Shizuku çalışmıyor.\n\nShizuku uygulamasını aç ve başlat. Android 10\'da bilgisayardan, Shizuku\'nun gösterdiği adb komutuyla başlatman gerekir (her yeniden başlatmadan sonra).</string>
+    <string name="shizuku_no_permission">Shizuku çalışıyor ama Hafiflet\'e izin verilmedi.</string>
+    <string name="shizuku_connecting">Bağlanıyor…</string>
+    <string name="shizuku_ready">Shizuku hazır ✓</string>
+    <string name="shizuku_open">Shizuku\'yu aç</string>
+    <string name="shizuku_grant">İzin ver</string>
+    <string name="shizuku_denied">İzin reddedilmiş. Shizuku uygulamasında "Yetkili uygulamalar" bölümünden Hafiflet\'e izin ver.</string>
+    <string name="shizuku_required">Bu bölüm için Shizuku bağlantısı gerekli.</string>
+
+    <string name="section_health">Sağlık</string>
+    <string name="ram_format">RAM: %1$s / %2$s kullanılıyor (%3$s boş)</string>
+    <string name="ram_low">\n⚠ Sistem bellek darlığında</string>
+    <string name="storage_format">Depolama: %1$s / %2$s dolu (%3$s boş)</string>
+    <string name="battery_format">Pil: %%%1$d · %2$.1f °C · %3$s\nAçık kalma süresi: %4$s</string>
+    <string name="charging">şarj oluyor</string>
+    <string name="not_charging">şarjda değil</string>
+    <string name="refresh">Yenile</string>
+    <string name="process_button">RAM\'i kim kullanıyor?</string>
+    <string name="process_loading">Ölçülüyor… (birkaç saniye sürebilir)</string>
+    <string name="process_failed">İşlem listesi okunamadı.</string>
+
+    <string name="section_quick">Hızlı ayarlar</string>
+    <string name="anim_format">Animasyon hızı: %1$.1fx</string>
+    <string name="anim_off">Kapalı</string>
+    <string name="anim_half">0.5x</string>
+    <string name="anim_default">1x</string>
+    <string name="anim_hint">0.5x geçişleri hızlandırır ve kasmayı azaltır. Bazı uygulamalarda yeniden açınca geçerli olur.</string>
+    <string name="wifi_scan">Wi-Fi taraması (Wi-Fi kapalıyken)</string>
+    <string name="ble_scan">Bluetooth taraması (Bluetooth kapalıyken)</string>
+    <string name="scan_hint">Kapatınca telefon, Wi-Fi/Bluetooth kapalıyken konum için arka planda tarama yapmaz. Pil ve işlemci tasarrufu sağlar.</string>
+
+    <string name="section_tools">Araçlar</string>
+    <string name="bloat_title">Gereksiz sistem uygulamaları</string>
+    <string name="bloat_hint">MIUI, Google ve Facebook\'un önyüklü uygulamalarını devre dışı bırak. Her işlem geri alınabilir.</string>
+    <string name="background_title">Arka plan kısıtlama</string>
+    <string name="background_hint">Seçtiğin uygulamaların sen kullanmıyorken çalışmasını engelle.</string>
+    <string name="dexopt">Uygulamaları derle</string>
+    <string name="dexopt_hint">Uygulamaları önceden derleyerek açılışlarını hızlandırır. Güncellemelerden sonra işe yarar.</string>
+    <string name="dexopt_confirm">Bu işlem birkaç dakika sürebilir ve telefonu ısıtabilir. Şarjdayken yapman önerilir.</string>
+    <string name="dexopt_running">Derleniyor… Uygulamayı kapatabilirsin, işlem arka planda sürer.</string>
+    <string name="dexopt_done">Tamamlandı.</string>
+    <string name="start">Başlat</string>
+    <string name="failed">İşlem başarısız.</string>
+
+    <string name="bloat_note">Kaldırma işlemi uygulamayı yalnızca senin kullanıcın için devre dışı bırakır; sistemden silmez. Fabrika ayarlarına dönmek veya "Geri yükle" her şeyi geri getirir.</string>
+    <string name="bloat_safe">Güvenle kaldırılabilir</string>
+    <string name="bloat_caution">Dikkat: kullanıyorsan kaldırma</string>
+    <string name="bloat_none">Listedeki uygulamalardan hiçbiri bu telefonda yok.</string>
+    <string name="bloat_remove">Seçilenleri kaldır</string>
+    <string name="bloat_restore">Geri yükle</string>
+    <string name="bloat_remove_confirm">Şu uygulamalar devre dışı bırakılacak:\n\n%1$s</string>
+    <string name="bloat_nothing_to_remove">Kaldırılacak aktif uygulama seçilmedi.</string>
+    <string name="bloat_nothing_to_restore">Geri yüklenecek uygulama seçilmedi.</string>
+    <string name="state_active">AKTİF</string>
+    <string name="state_disabled">KAPALI</string>
+    <string name="state_removed">KALDIRILDI</string>
+    <string name="result_ok">%1$d uygulama için işlem tamamlandı.</string>
+    <string name="result_partial">%1$d başarılı, %2$d başarısız:\n\n%3$s</string>
+
+    <string name="background_note">İşaretli uygulamalar sen kullanmıyorken arka planda çalışamaz. Bu RAM ve pil tasarrufu sağlar, ama bildirimleri gecikebilir. Mesajlaşma uygulamalarını işaretleme.</string>
+    <string name="state_restricted">KISITLI</string>
+    <string name="state_free">serbest</string>
+    <string name="messaging_warning">⚠ Mesajlaşma: bildirimler gecikebilir</string>
+
+    <string name="row_subtitle">%1$s\n%2$s</string>
+</resources>
