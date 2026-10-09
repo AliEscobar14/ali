@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Android 15'te zorunlu kenardan kenara çizimi kapatır; düzen sistem çubuklarının altında kalmaz. -->
+    <style name="AppTheme" parent="Base.AppTheme">
+        <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
+    </style>
+</resources>

@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <com.google.android.material.card.MaterialCardView
+            android:id="@+id/shizuku_banner"
+            style="@style/Card"
+            android:visibility="gone"
+            app:cardBackgroundColor="?attr/colorErrorContainer">
+
+            <TextView
+                style="@style/Body"
+                android:text="@string/shizuku_banner"
+                android:textColor="?attr/colorOnErrorContainer" />
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Ekran -->
+        <com.google.android.material.card.MaterialCardView style="@style/Card">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView style="@style/CardTitle" android:text="@string/section_display" />
+
+                <TextView
+                    style="@style/Label"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/anim_title" />
+
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/anim_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    app:selectionRequired="true"
+                    app:singleSelection="true">
+
+                    <Button android:id="@+id/anim_off" style="@style/Toggle" android:text="@string/anim_off" />
+                    <Button android:id="@+id/anim_half" style="@style/Toggle" android:text="@string/anim_half" />
+                    <Button android:id="@+id/anim_default" style="@style/Toggle" android:text="@string/anim_default" />
+                </com.google.android.material.button.MaterialButtonToggleGroup>
+
+                <TextView style="@style/Hint" android:text="@string/anim_hint" />
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="16dp" />
+
+                <TextView style="@style/Label" android:text="@string/res_title" />
+
+                <TextView
+                    android:id="@+id/res_current"
+                    style="@style/Hint" />
+
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/res_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    app:selectionRequired="true"
+                    app:singleSelection="true">
+
+                    <Button android:id="@+id/res_100" style="@style/Toggle" android:text="@string/res_original" />
+                    <Button android:id="@+id/res_90" style="@style/Toggle" android:text="@string/res_90" />
+                    <Button android:id="@+id/res_80" style="@style/Toggle" android:text="@string/res_80" />
+                </com.google.android.material.button.MaterialButtonToggleGroup>
+
+                <TextView style="@style/Hint" android:text="@string/res_hint" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- İnternet -->
+        <com.google.android.material.card.MaterialCardView style="@style/Card">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView style="@style/CardTitle" android:text="@string/section_network" />
+
+                <TextView
+                    style="@style/Label"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/dns_title" />
+
+                <com.google.android.material.button.MaterialButtonToggleGroup
+                    android:id="@+id/dns_group"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    app:singleSelection="true">
+
+                    <Button android:id="@+id/dns_off" style="@style/Toggle" android:text="@string/dns_off" />
+                    <Button android:id="@+id/dns_adguard" style="@style/Toggle" android:text="@string/dns_adguard" />
+                    <Button android:id="@+id/dns_family" style="@style/Toggle" android:text="@string/dns_family" />
+                </com.google.android.material.button.MaterialButtonToggleGroup>
+
+                <TextView
+                    android:id="@+id/dns_custom"
+                    style="@style/Hint"
+                    android:text="@string/dns_custom"
+                    android:visibility="gone" />
+
+                <TextView style="@style/Hint" android:text="@string/dns_hint" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Pil ve arka plan -->
+        <com.google.android.material.card.MaterialCardView style="@style/Card">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView style="@style/CardTitle" android:text="@string/section_background" />
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/wifi_scan"
+                    style="@style/Body"
+                    android:layout_marginTop="8dp"
+                    android:minHeight="48dp"
+                    android:text="@string/wifi_scan" />
+
+                <com.google.android.material.materialswitch.MaterialSwitch
+                    android:id="@+id/ble_scan"
+                    style="@style/Body"
+                    android:minHeight="48dp"
+                    android:text="@string/ble_scan" />
+
+                <TextView style="@style/Hint" android:text="@string/scan_hint" />
+
+                <include
+                    android:id="@+id/background_row"
+                    layout="@layout/item_nav_row" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Depolama ve hız -->
+        <com.google.android.material.card.MaterialCardView style="@style/Card">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <TextView style="@style/CardTitle" android:text="@string/section_storage" />
+
+                <TextView
+                    style="@style/Label"
+                    android:layout_marginTop="12dp"
+                    android:text="@string/cache_title" />
+
+                <TextView style="@style/Hint" android:text="@string/cache_hint" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <Button
+                        android:id="@+id/cache_button"
+                        style="@style/Widget.Material3.Button.TonalButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/cache_button" />
+
+                    <TextView
+                        android:id="@+id/cache_result"
+                        style="@style/Label"
+                        android:layout_width="0dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="12dp"
+                        android:textColor="?attr/colorPrimary" />
+                </LinearLayout>
+
+                <com.google.android.material.divider.MaterialDivider
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginVertical="16dp" />
+
+                <TextView style="@style/Label" android:text="@string/dexopt" />
+
+                <TextView style="@style/Hint" android:text="@string/dexopt_hint" />
+
+                <Button
+                    android:id="@+id/dexopt_button"
+                    style="@style/Widget.Material3.Button.TonalButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:text="@string/dexopt" />
+
+                <include
+                    android:id="@+id/bloat_row"
+                    layout="@layout/item_nav_row" />
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

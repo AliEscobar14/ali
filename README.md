@@ -5,11 +5,22 @@ Root gerekmez. "RAM temizleyici" gibi sahte hızlandırma yapmaz. Sadece sistemi
 
 ## Özellikler
 
-- **Gereksiz sistem uygulamaları:** MIUI reklam ve analiz servisleri, GetApps, Google ve Facebook önyüklü uygulamaları devre dışı bırakır. Liste "Güvenli" ve "Dikkat" olarak ikiye ayrılmıştır. Her işlem **Geri yükle** ile geri alınabilir.
-- **Arka plan kısıtlama:** Seçilen uygulamaların arka planda çalışmasını engeller (`RUN_ANY_IN_BACKGROUND`).
-- **Hızlı ayarlar:** Animasyon hızını (kapalı / 0.5x / 1x) ve arka plan Wi-Fi ile Bluetooth taramasını ayarlar.
-- **Uygulamaları derle:** `bg-dexopt-job` ile uygulamaları önceden derler, böylece açılışları hızlanır.
-- **Sağlık paneli:** RAM, depolama, pil sıcaklığı ve RAM'i en çok kullanan işlemler.
+**Panel**
+- Canlı RAM, depolama ve pil durumu
+- RAM'i en çok kullanan işlemler
+
+**Optimize**
+- **Animasyon hızı:** Kapalı / 0.5x / 1x seçenekleri.
+- **Çözünürlük:** Ekran çözünürlüğünü %90 ya da %80'e düşürür. Yoğunluk da aynı oranda düşürüldüğü için yazı ve simge boyutları değişmez. Değişiklik 15 saniye içinde onaylanmazsa ekran kendiliğinden eski haline döner.
+- **Reklam engelleyici DNS:** AdGuard ya da AdGuard Aile (özel DNS) ile reklamları tüm telefonda engeller.
+- **Arka plan taramaları:** Wi-Fi ve Bluetooth arka plan taramasını kapatır.
+- **Arka plan kısıtlama:** Seçilen uygulamaların arka planda çalışmasını engeller (`RUN_ANY_IN_BACKGROUND`). Uygulama arama özelliği vardır.
+- **Önbellek temizliği:** Tüm uygulamaların önbelleğini temizler (`pm trim-caches`).
+- **Uygulamaları derle:** Uygulamaları `bg-dexopt-job` ile önceden derler.
+- **Gereksiz sistem uygulamaları:** MIUI, Google ve Facebook önyüklü uygulamalarını kapatır.
+
+**Geçmiş**
+- Yapılan her değişiklik, onu geri alacak komutla birlikte kaydedilir. Tek tek ya da **hepsi birden** geri alınabilir.
 
 ## Kurulum (Redmi 9A)
 
@@ -32,4 +43,4 @@ Her push'ta GitHub Actions bir APK derler. Repo'nun **Actions** sekmesinde → s
 ./gradlew assembleRelease
 ```
 
-Android SDK gerekir (Android Studio ile gelir). Projede AndroidX ya da Compose yok: arayüz sadece platform bileşenleriyle yazıldı. Böylece APK küçük ve bellek kullanımı düşük kalır.
+Android SDK gerekir (Android Studio ile gelir). Arayüz Material 3 (View tabanlı) ile yazıldı. Compose bilerek kullanılmadı, çünkü düşük RAM'li cihazlarda daha ağır çalışıyor.
